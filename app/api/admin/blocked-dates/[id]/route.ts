@@ -12,7 +12,7 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const deleted = deleteBlockedDate(id);
+  const deleted = await deleteBlockedDate(id);
   if (!deleted) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }

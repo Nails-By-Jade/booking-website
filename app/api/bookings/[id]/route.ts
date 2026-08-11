@@ -30,7 +30,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid status." }, { status: 400 });
   }
 
-  const booking = updateBookingStatus(id, status);
+  const booking = await updateBookingStatus(id, status);
   if (!booking) {
     return NextResponse.json({ error: "Booking not found." }, { status: 404 });
   }
@@ -49,7 +49,7 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const removed = deleteBooking(id);
+  const removed = await deleteBooking(id);
   if (!removed) {
     return NextResponse.json({ error: "Booking not found." }, { status: 404 });
   }

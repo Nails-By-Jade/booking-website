@@ -4,7 +4,7 @@ import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 
 // Public: anyone can view "View My Nails" designs.
 export async function GET() {
-  const posts = getAllGalleryPosts();
+  const posts = await getAllGalleryPosts();
   return NextResponse.json({ posts });
 }
 
@@ -23,6 +23,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const post = createGalleryPost({ title, imageUrl, description, serviceSlug });
+  const post = await createGalleryPost({ title, imageUrl, description, serviceSlug });
   return NextResponse.json({ post }, { status: 201 });
 }

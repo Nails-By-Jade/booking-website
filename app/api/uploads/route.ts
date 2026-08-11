@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { put } from "@vercel/blob";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_BYTES = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
@@ -16,10 +14,10 @@ const ALLOWED_TYPES = new Set([
  * gallery-post images. Deliberately public — customers need to upload
  * before they're "logged in" anywhere.
  *
- * Files are written to /public/uploads on local disk — like
- * bookings-store.ts, this WILL NOT persist on Vercel's read-only
- * filesystem in production. Point this at S3/Cloudinary/Vercel Blob
- * before you deploy there.
+ * Files are stored in Vercel Blob (persistent, CDN-backed). Requires the
+ * BLOB_READ_WRITE_TOKEN env var — set automatically when you add the Blob
+ * store in your Vercel project (Storage tab), or manually in .env.local
+ * for local dev.
  */
 export async function POST(request: NextRequest) {
   const form = await request.formData();
@@ -41,11 +39,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
   const ext = file.type.split("/")[1];
   const filename = `${crypto.randomUUID()}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
-  fs.writeFileSync(path.join(UPLOAD_DIR, filename), buffer);
 
-  return NextResponse.json({ url: `/uploads/${filename}` });
+  const blob = await put(`uploads/${filename}`, file, {
+    access: "public",
+    contentType: file.type,
+  });
+
+  return NextResponse.json({ url: blob.url });
 }

@@ -1,5 +1,27 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Storage setup (required before deploying)
+
+This app stores data in **Neon Postgres** and uploaded images in **Vercel Blob** — both have generous free tiers. Local file storage was removed because Vercel's serverless filesystem is read-only in production.
+
+### 1. Add the databases in Vercel
+
+In your Vercel project dashboard:
+- **Storage → Create Database → Neon (Postgres)**. This automatically sets the `DATABASE_URL` env var for you.
+- **Storage → Create Database → Blob**. This automatically sets the `BLOB_READ_WRITE_TOKEN` env var for you.
+
+### 2. Create the tables
+
+Run `lib/schema.sql` once against your new Neon database. Easiest way: open the database in the Vercel Storage tab, go to its "Query" / SQL editor, paste the contents of `lib/schema.sql`, and run it. (Or `psql "$DATABASE_URL" -f lib/schema.sql` if you have `psql` installed locally.)
+
+### 3. Redeploy
+
+Once the env vars exist and the tables are created, redeploy (or just push — Vercel will use the new env vars automatically).
+
+### Local development
+
+Copy the `DATABASE_URL` and `BLOB_READ_WRITE_TOKEN` values from your Vercel project (Settings → Environment Variables) into `.env.local` so `npm run dev` can reach the same database.
+
 ## Getting Started
 
 First, run the development server:

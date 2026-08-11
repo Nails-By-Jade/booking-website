@@ -1,13 +1,7 @@
-import fs from "fs";
-import path from "path";
+import { sql } from "./db";
 
 /**
- * "View My Nails" gallery data store.
- *
- * Same file-on-disk approach as bookings-store.ts — fine for local dev,
- * won't persist on Vercel's read-only filesystem in production. Swap the
- * internals for a DB query later; getAllGalleryPosts/createGalleryPost/
- * deleteGalleryPost is the only contract the rest of the app depends on.
+ * "View My Nails" gallery data store — backed by Neon Postgres (see lib/db.ts).
  */
 
 export type GalleryPost = {
@@ -19,46 +13,40 @@ export type GalleryPost = {
   createdAt: string;
 };
 
-const DATA_FILE = path.join(process.cwd(), "data", "gallery.json");
-
-function readFile(): GalleryPost[] {
-  try {
-    const raw = fs.readFileSync(DATA_FILE, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function writeFile(posts: GalleryPost[]) {
-  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2), "utf-8");
-}
-
-export function getAllGalleryPosts(): GalleryPost[] {
-  return readFile().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-export function createGalleryPost(
-  input: Omit<GalleryPost, "id" | "createdAt">
-): GalleryPost {
-  const posts = readFile();
-
-  const post: GalleryPost = {
-    ...input,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToPost(row: any): GalleryPost {
+  return {
+    id: row.id,
+    title: row.title,
+    imageUrl: row.image_url,
+    description: row.description ?? undefined,
+    serviceSlug: row.service_slug ?? undefined,
+    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
   };
-
-  posts.push(post);
-  writeFile(posts);
-  return post;
 }
 
-export function deleteGalleryPost(id: string): boolean {
-  const posts = readFile();
-  const next = posts.filter((p) => p.id !== id);
-  if (next.length === posts.length) return false;
-  writeFile(next);
-  return true;
+export async function getAllGalleryPosts(): Promise<GalleryPost[]> {
+  const rows = await sql`
+    SELECT * FROM gallery_posts ORDER BY created_at DESC
+  `;
+  return rows.map(rowToPost);
+}
+
+export async function createGalleryPost(
+  input: Omit<GalleryPost, "id" | "createdAt">
+): Promise<GalleryPost> {
+  const id = crypto.randomUUID();
+  const rows = await sql`
+    INSERT INTO gallery_posts (id, title, image_url, description, service_slug)
+    VALUES (${id}, ${input.title}, ${input.imageUrl}, ${input.description ?? null}, ${input.serviceSlug ?? null})
+    RETURNING *
+  `;
+  return rowToPost(rows[0]);
+}
+
+export async function deleteGalleryPost(id: string): Promise<boolean> {
+  const rows = await sql`
+    DELETE FROM gallery_posts WHERE id = ${id} RETURNING id
+  `;
+  return rows.length > 0;
 }

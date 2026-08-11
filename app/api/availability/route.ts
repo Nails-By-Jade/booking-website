@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   }
 
   const duration = serviceSlug ? getServiceBySlug(serviceSlug)?.duration ?? 60 : 60;
-  const takenSlots = getBlockedSlots(date, duration);
+  const takenSlots = await getBlockedSlots(date, duration);
 
   return NextResponse.json({ takenSlots });
 }

@@ -1,7 +1,6 @@
-import fs from "fs";
-import path from "path";
+import { sql } from "./db";
 
-/** Contact-form submissions. Same file-store pattern as the other stores. */
+/** Contact-form submissions — backed by Neon Postgres (see lib/db.ts). */
 
 export type ContactMessage = {
   id: string;
@@ -11,38 +10,32 @@ export type ContactMessage = {
   createdAt: string;
 };
 
-const DATA_FILE = path.join(process.cwd(), "data", "messages.json");
-
-function readFile(): ContactMessage[] {
-  try {
-    const raw = fs.readFileSync(DATA_FILE, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function writeFile(messages: ContactMessage[]) {
-  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(messages, null, 2), "utf-8");
-}
-
-export function getAllMessages(): ContactMessage[] {
-  return readFile().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-export function createMessage(
-  input: Omit<ContactMessage, "id" | "createdAt">
-): ContactMessage {
-  const messages = readFile();
-
-  const message: ContactMessage = {
-    ...input,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToMessage(row: any): ContactMessage {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    message: row.message,
+    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
   };
+}
 
-  messages.push(message);
-  writeFile(messages);
-  return message;
+export async function getAllMessages(): Promise<ContactMessage[]> {
+  const rows = await sql`
+    SELECT * FROM messages ORDER BY created_at DESC
+  `;
+  return rows.map(rowToMessage);
+}
+
+export async function createMessage(
+  input: Omit<ContactMessage, "id" | "createdAt">
+): Promise<ContactMessage> {
+  const id = crypto.randomUUID();
+  const rows = await sql`
+    INSERT INTO messages (id, name, email, message)
+    VALUES (${id}, ${input.name}, ${input.email}, ${input.message})
+    RETURNING *
+  `;
+  return rowToMessage(rows[0]);
 }

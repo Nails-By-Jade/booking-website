@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const bookings = getAllBookings();
+  const bookings = await getAllBookings();
   return NextResponse.json({ bookings });
 }
 
@@ -33,14 +33,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unknown service." }, { status: 400 });
   }
 
-  if (isDateBlocked(date)) {
+  if (await isDateBlocked(date)) {
     return NextResponse.json(
       { error: "That date isn't available. Pick another." },
       { status: 400 }
     );
   }
 
-  if (isSlotTaken(date, time, service.duration)) {
+  if (await isSlotTaken(date, time, service.duration)) {
     return NextResponse.json(
       { error: "That time slot was just booked. Pick another." },
       { status: 409 }
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const booking = createBooking({
+  const booking = await createBooking({
     serviceSlug,
     serviceName: service.name,
     price: service.price,

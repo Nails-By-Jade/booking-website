@@ -8,6 +8,10 @@ import { services } from "@/lib/services";
 import { formatPHP } from "@/lib/format";
 import { getAllGalleryPosts } from "@/lib/gallery-store";
 
+// Gallery posts change via the admin panel, so render fresh on each request
+// instead of baking the list in at build time.
+export const dynamic = "force-dynamic";
+
 
 
 const steps = [
@@ -28,8 +32,8 @@ const steps = [
   },
 ];
 
-export default function Home() {
-  const galleryPosts = getAllGalleryPosts().slice(0, 6);
+export default async function Home() {
+  const galleryPosts = (await getAllGalleryPosts()).slice(0, 6);
 
   return (
     <div className="min-h-screen">

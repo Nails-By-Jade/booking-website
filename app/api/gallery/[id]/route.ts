@@ -13,7 +13,7 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const removed = deleteGalleryPost(id);
+  const removed = await deleteGalleryPost(id);
   if (!removed) {
     return NextResponse.json({ error: "Post not found." }, { status: 404 });
   }

@@ -10,8 +10,12 @@ export const metadata = {
     "Browse recent nail sets from Nails By Jade for inspiration for your next appointment.",
 };
 
-export default function GalleryPage() {
-  const posts = getAllGalleryPosts();
+// Gallery posts change via the admin panel, so render fresh on each request
+// instead of baking the list in at build time.
+export const dynamic = "force-dynamic";
+
+export default async function GalleryPage() {
+  const posts = await getAllGalleryPosts();
 
   return (
     <div className="min-h-screen bg-white">

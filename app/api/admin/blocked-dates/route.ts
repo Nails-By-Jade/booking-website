@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   if (!requireAdmin(request)) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
-  return NextResponse.json({ blockedDates: getAllBlockedDates() });
+  return NextResponse.json({ blockedDates: await getAllBlockedDates() });
 }
 
 export async function POST(request: NextRequest) {
@@ -29,6 +29,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Add a short reason." }, { status: 400 });
   }
 
-  const blockedDates = addBlockedDates(dates, reason.trim());
+  const blockedDates = await addBlockedDates(dates, reason.trim());
   return NextResponse.json({ blockedDates }, { status: 201 });
 }
