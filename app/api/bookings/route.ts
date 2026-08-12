@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 // Public: customers create their own bookings.
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { serviceSlug, date, time, name, phone, email, notes, inspoImageUrl } = body;
+  const { serviceSlug, date, time, name, phone, email, igUsername, notes, inspoImageUrl } = body;
 
   if (!serviceSlug || !date || !time || !name || !phone || !email) {
     return NextResponse.json(
@@ -64,9 +64,9 @@ export async function POST(request: NextRequest) {
     name,
     phone,
     email,
+    igUsername,
     notes,
     inspoImageUrl,
   });
-
   return NextResponse.json({ booking }, { status: 201 });
 }

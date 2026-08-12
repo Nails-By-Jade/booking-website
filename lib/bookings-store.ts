@@ -22,6 +22,7 @@ export type Booking = {
   name: string;
   phone: string;
   email: string;
+  igUsername?: string;
   notes?: string;
   inspoImageUrl?: string;
   status: BookingStatus;
@@ -40,6 +41,7 @@ function rowToBooking(row: any): Booking {
     name: row.name,
     phone: row.phone,
     email: row.email,
+    igUsername: row.ig_username ?? undefined,
     notes: row.notes ?? undefined,
     inspoImageUrl: row.inspo_image_url ?? undefined,
     status: row.status,
@@ -59,16 +61,16 @@ export async function createBooking(
 ): Promise<Booking> {
   const id = crypto.randomUUID();
   const rows = await sql`
-    INSERT INTO bookings (
-      id, service_slug, service_name, price, date, time,
-      name, phone, email, notes, inspo_image_url, status
-    ) VALUES (
-      ${id}, ${input.serviceSlug}, ${input.serviceName}, ${input.price},
-      ${input.date}, ${input.time}, ${input.name}, ${input.phone},
-      ${input.email}, ${input.notes ?? null}, ${input.inspoImageUrl ?? null}, 'pending'
-    )
-    RETURNING *
-  `;
+  INSERT INTO bookings (
+    id, service_slug, service_name, price, date, time,
+    name, phone, email, ig_username, notes, inspo_image_url, status
+  ) VALUES (
+    ${id}, ${input.serviceSlug}, ${input.serviceName}, ${input.price},
+    ${input.date}, ${input.time}, ${input.name}, ${input.phone},
+    ${input.email}, ${input.igUsername ?? null}, ${input.notes ?? null}, ${input.inspoImageUrl ?? null}, 'pending'
+  )
+  RETURNING *
+`;
   return rowToBooking(rows[0]);
 }
 

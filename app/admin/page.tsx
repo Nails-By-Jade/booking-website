@@ -242,6 +242,16 @@ export default function AdminPage() {
                         <td className="px-5 py-4 text-xs text-ink/60">
                           <div>{b.phone}</div>
                           <div>{b.email}</div>
+                          {b.igUsername && (
+                            <a
+                              href={`https://instagram.com/${b.igUsername.replace(/^@/, "")}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-coral hover:underline"
+                            >
+                              @{b.igUsername.replace(/^@/, "")}
+                            </a>
+                          )}
                         </td>
                         <td className="px-5 py-4">
                           {b.inspoImageUrl ? (
@@ -333,6 +343,16 @@ export default function AdminPage() {
                       <td className="px-5 py-4 text-xs text-ink/60">
                         <div>{b.phone}</div>
                         <div>{b.email}</div>
+                        {b.igUsername && (
+                          <a
+                            href={`https://instagram.com/${b.igUsername.replace(/^@/, "")}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-coral hover:underline"
+                          >
+                            @{b.igUsername.replace(/^@/, "")}
+                          </a>
+                        )}
                       </td>
                       <td className="px-5 py-4 text-xs text-berry">
                         {formatPHP(b.price)}

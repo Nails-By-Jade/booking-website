@@ -7,14 +7,17 @@ CREATE TABLE IF NOT EXISTS bookings (
   price          INTEGER NOT NULL,
   date           TEXT NOT NULL,
   time           TEXT NOT NULL,
-  name           TEXT NOT NULL,
+name           TEXT NOT NULL,
   phone          TEXT NOT NULL,
   email          TEXT NOT NULL,
+  ig_username    TEXT,
   notes          TEXT,
   inspo_image_url TEXT,
   status         TEXT NOT NULL DEFAULT 'pending',
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS ig_username TEXT;
 
 CREATE TABLE IF NOT EXISTS gallery_posts (
   id            TEXT PRIMARY KEY,

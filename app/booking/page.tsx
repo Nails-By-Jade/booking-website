@@ -18,7 +18,7 @@ function BookingFlow() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [takenSlots, setTakenSlots] = useState<string[]>([]);
-  const [form, setForm] = useState({ name: "", phone: "", email: "", notes: "" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", igUsername: "", notes: "" });
   const [inspoFile, setInspoFile] = useState<File | null>(null);
   const [inspoPreview, setInspoPreview] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -226,6 +226,20 @@ function BookingFlow() {
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             className="w-full rounded-xl border border-ink/15 px-4 py-3 text-sm focus:border-coral focus:outline-none"
           />
+          <div>
+            <div className="flex items-center rounded-xl border border-ink/15 focus-within:border-coral">
+              <span className="pl-4 text-sm text-ink/40">@</span>
+              <input
+                placeholder="Instagram username (optional)"
+                value={form.igUsername}
+                onChange={(e) => setForm({ ...form, igUsername: e.target.value })}
+                className="w-full rounded-xl px-2 py-3 text-sm focus:outline-none"
+              />
+            </div>
+            <p className="mt-1 text-xs text-ink/40">
+              Easiest way for us to reach you if we need to confirm details.
+            </p>
+          </div>
           <textarea
             placeholder="Notes (optional) — color ideas, allergies, etc."
             value={form.notes}
@@ -293,6 +307,12 @@ function BookingFlow() {
               <span className="text-ink/50">Name</span>
               <span className="font-semibold">{form.name}</span>
             </div>
+            {form.igUsername && (
+              <div className="flex justify-between border-t border-ink/10 py-2">
+                <span className="text-ink/50">Instagram</span>
+                <span className="font-semibold">@{form.igUsername.replace(/^@/, "")}</span>
+              </div>
+            )}
             <div className="flex justify-between border-t border-ink/10 py-2">
               <span className="text-ink/50">Price</span>
               <span className="font-semibold text-berry">
