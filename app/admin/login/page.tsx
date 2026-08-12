@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -33,8 +31,8 @@ export default function AdminLoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
-      router.push("/admin");
-      router.refresh();
+      window.location.href = "/admin";
+      return;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
