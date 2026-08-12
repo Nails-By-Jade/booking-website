@@ -47,9 +47,9 @@ export default function AdminAvailabilityPage() {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+   
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+ 
   }, []);
 
   const blockedMap = useMemo(() => {
@@ -59,7 +59,7 @@ export default function AdminAvailabilityPage() {
   }, [blockedDates]);
 
   function toggleDate(key: string) {
-    if (blockedMap.has(key)) return; // already blocked — unblock via the list below
+    if (blockedMap.has(key)) return; 
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);

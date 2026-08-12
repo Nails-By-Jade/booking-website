@@ -32,9 +32,9 @@ export default function AdminGalleryPage() {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     checkAuthAndLoad();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {

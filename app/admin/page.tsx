@@ -43,9 +43,9 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   async function setStatus(id: string, status: BookingStatus) {
@@ -88,15 +88,15 @@ export default function AdminPage() {
     pending: bookings.filter((b) => b.status === "pending").length,
     today: bookings.filter((b) => b.date === todayKey && b.status !== "cancelled")
       .length,
-    // Money actually earned — completed appointments only.
+    // Money actually earned
     totalIncome: bookings
       .filter((b) => b.status === "completed")
       .reduce((sum, b) => sum + b.price, 0),
-    // Value of everything booked in for today (excluding cancellations).
+    // Value of everything booked in for today 
     todayTotal: bookings
       .filter((b) => b.date === todayKey && b.status !== "cancelled")
       .reduce((sum, b) => sum + b.price, 0),
-    // Confirmed/pending appointments still ahead of us.
+    // Confirmed/pending appointments 
     upcoming: bookings.filter(
       (b) =>
         b.date >= todayKey &&
@@ -260,7 +260,7 @@ export default function AdminPage() {
                               target="_blank"
                               rel="noreferrer"
                             >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                             
                               <img
                                 src={b.inspoImageUrl}
                                 alt={`${b.name}'s inspo photo`}

@@ -8,8 +8,7 @@ import { services } from "@/lib/services";
 import { formatPHP } from "@/lib/format";
 import { getAllGalleryPosts } from "@/lib/gallery-store";
 
-// Gallery posts change via the admin panel, so render fresh on each request
-// instead of baking the list in at build time.
+
 export const dynamic = "force-dynamic";
 
 
