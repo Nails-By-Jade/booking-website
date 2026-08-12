@@ -12,15 +12,24 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const formUsername = String(formData.get("username") ?? "").trim();
+    const formPassword = String(formData.get("password") ?? "");
+
+    if (!formUsername || !formPassword) {
+      setError("Please fill in both fields.");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
     try {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: formUsername, password: formPassword }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
@@ -66,7 +75,8 @@ export default function AdminLoginPage() {
             </label>
             <input
               autoFocus
-              value={username}
+              name="username"
+              defaultValue={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full rounded-xl border border-ink/15 px-4 py-3 text-sm focus:border-coral focus:outline-none"
             />
@@ -77,14 +87,15 @@ export default function AdminLoginPage() {
             </label>
             <input
               type="password"
-              value={password}
+              name="password"
+              defaultValue={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-ink/15 px-4 py-3 text-sm focus:border-coral focus:outline-none"
             />
           </div>
           {error && <p className="text-sm text-berry">{error}</p>}
           <button
-            disabled={submitting || !username || !password}
+            disabled={submitting}
             type="submit"
             className="w-full rounded-full bg-coral py-3 text-sm font-semibold text-white transition disabled:opacity-40"
           >
