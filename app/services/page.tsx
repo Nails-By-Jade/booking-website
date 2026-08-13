@@ -36,7 +36,7 @@ export default function ServicesPage() {
           <p className="mx-auto mt-5 max-w-xl text-sm leading-6 text-ink/60 sm:text-base">
             Find the perfect service for your next set. Choose your favorite
             look, pick a schedule, and let us create something beautiful for
-            you. 🎀
+            you.
           </p>
         </div>
       </section>

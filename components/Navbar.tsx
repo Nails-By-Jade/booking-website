@@ -3,93 +3,163 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
-  { href: "/gallery", label: "View My Nails" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-nude bg-cream/90 backdrop-blur">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center" onClick={() => setOpen(false)}>
+    <header className="sticky top-0 z-40 border-b border-berry/5 bg-cream/85 backdrop-blur-md">
+      <nav className="mx-auto flex h-[76px] max-w-6xl items-center justify-between px-5 sm:px-6">
+        
+        {/* Logo */}
+        <Link
+          href="/"
+          onClick={() => setOpen(false)}
+          className="group flex items-center"
+          aria-label="Nails By Jade Home"
+        >
           <Image
             src="/logo.png"
             alt="Nails By Jade"
-            width={90}
-            height={56}
-            className="h-10 w-auto"
+            width={100}
+            height={62}
+            className="h-11 w-auto transition duration-300 group-hover:scale-[1.03]"
             priority
           />
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-7 text-sm font-semibold text-ink lg:flex">
-          {links.map((link) => (
-            <Link key={link.href} href={link.href} className="transition hover:text-coral">
-              {link.label}
-            </Link>
-          ))}
+        {/* Desktop Navigation */}
+        <div className="hidden items-center gap-1 lg:flex">
+          {links.map((link) => {
+            const active = isActive(link.href);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`relative rounded-full px-4 py-2 text-sm font-semibold transition duration-200 ${
+                  active
+                    ? "text-coral"
+                    : "text-ink/70 hover:bg-white/60 hover:text-coral"
+                }`}
+              >
+                {link.label}
+
+                {/* Active indicator */}
+                {active && (
+                  <span className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-coral" />
+                )}
+              </Link>
+            );
+          })}
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Actions */}
+        <div className="flex items-center gap-2.5">
+          {/* Desktop Book Button */}
           <Link
             href="/booking"
-            className="rounded-full bg-coral px-6 py-2.5 text-sm font-bold text-white transition hover:bg-coral-dark"
+            className="hidden items-center rounded-full bg-coral px-6 py-2.5 text-sm font-bold text-white shadow-sm shadow-coral/20 transition duration-300 hover:-translate-y-0.5 hover:bg-coral-dark hover:shadow-md lg:inline-flex"
+          >
+            Book Now
+            <span className="ml-1.5 transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
+
+          {/* Mobile Book Button */}
+          <Link
+            href="/booking"
+            onClick={() => setOpen(false)}
+            className="rounded-full bg-coral px-5 py-2.5 text-xs font-bold text-white shadow-sm shadow-coral/20 transition hover:bg-coral-dark sm:text-sm lg:hidden"
           >
             Book Now
           </Link>
 
-          {/* Mobile menu toggle */}
+          {/* Mobile Menu Toggle */}
           <button
             type="button"
             onClick={() => setOpen((prev) => !prev)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-nude text-ink transition hover:text-coral lg:hidden"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-berry/10 bg-white/50 text-ink transition duration-200 hover:border-coral/30 hover:text-coral lg:hidden"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              {open ? (
-                <path d="M4 4l12 12M16 4L4 16" />
-              ) : (
-                <path d="M3 5h14M3 10h14M3 15h14" />
-              )}
-            </svg>
+            <span className="sr-only">
+              {open ? "Close menu" : "Open menu"}
+            </span>
+
+            <span className="relative block h-5 w-5">
+              <span
+                className={`absolute left-0 top-1/2 h-[1.5px] w-5 rounded-full bg-current transition duration-300 ${
+                  open ? "rotate-45" : "-translate-y-1.5"
+                }`}
+              />
+
+              <span
+                className={`absolute left-0 top-1/2 h-[1.5px] w-5 rounded-full bg-current transition duration-300 ${
+                  open ? "opacity-0" : "opacity-100"
+                }`}
+              />
+
+              <span
+                className={`absolute left-0 top-1/2 h-[1.5px] w-5 rounded-full bg-current transition duration-300 ${
+                  open ? "-rotate-45" : "translate-y-1.5"
+                }`}
+              />
+            </span>
           </button>
         </div>
       </nav>
 
-      {/* Mobile menu panel */}
-      {open && (
-        <div className="border-t border-nude bg-cream lg:hidden">
-          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-4 text-sm font-semibold text-ink">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-3 transition hover:bg-nude/40 hover:text-coral"
-              >
-                {link.label}
-              </Link>
-            ))}
+      {/* Mobile Menu */}
+      <div
+        className={`overflow-hidden border-t border-berry/5 bg-cream/95 transition-all duration-300 lg:hidden ${
+          open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="mx-auto max-w-6xl px-5 pb-5 pt-3 sm:px-6">
+          <div className="rounded-2xl bg-white/60 p-2 shadow-sm">
+            {links.map((link) => {
+              const active = isActive(link.href);
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-sm font-semibold transition ${
+                    active
+                      ? "bg-nude-light text-coral"
+                      : "text-ink/70 hover:bg-nude-light hover:text-coral"
+                  }`}
+                >
+                  <span>{link.label}</span>
+
+                  {active && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-coral" />
+                  )}
+                </Link>
+              );
+            })}
           </div>
+
         </div>
-      )}
+      </div>
     </header>
   );
 }

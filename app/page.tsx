@@ -146,7 +146,7 @@ export default async function Home() {
   </div>
 </section>
 
- {/* Services Preview */}
+{/* Services Preview */}
 <section className="bg-nude-light py-20">
   <div className="mx-auto max-w-6xl px-6">
     {/* Header */}
@@ -171,62 +171,64 @@ export default async function Home() {
         <Link
           key={s.slug}
           href={`/booking?service=${s.slug}`}
-          className="group relative overflow-hidden rounded-[2rem] bg-white p-7 shadow-[0_8px_24px_rgba(122,61,76,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_35px_rgba(122,61,76,0.13)]"
+          className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-ink/5 bg-white p-7 shadow-[0_8px_24px_rgba(122,61,76,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_35px_rgba(122,61,76,0.12)]"
         >
           {/* Decorative Sparkle */}
           <div className="absolute right-5 top-5 text-coral/40 transition duration-300 group-hover:scale-125 group-hover:rotate-12">
             <Sparkle />
           </div>
 
-          {/* Service Swatch */}
+          {/* Color Swatch */}
           <div
-            className="swatch mx-auto flex h-20 w-20 items-center justify-center rounded-full shadow-sm transition duration-300 group-hover:scale-105"
+            className="swatch flex h-16 w-16 items-center justify-center rounded-full shadow-sm transition duration-300 group-hover:scale-105"
             style={{ backgroundColor: s.swatch }}
           >
-            <span className="text-white/80">✦</span>
+            <span className="text-white/70">✦</span>
           </div>
 
           {/* Service Info */}
-          <div className="mt-6 text-center">
-            <h3 className="font-display text-xl text-ink">
-              {s.name}
-            </h3>
+          <h3 className="mt-6 font-display text-xl text-ink">
+            {s.name}
+          </h3>
 
-            <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-ink/60">
-              {s.description}
-            </p>
+          <p className="mt-2 flex-1 text-sm leading-6 text-ink/60">
+            {s.description}
+          </p>
 
-            {/* Details */}
-            <div className="mt-5 flex items-center justify-center gap-3 text-sm">
-              <span className="rounded-full bg-nude-light px-3 py-1 text-ink/50">
-                {s.duration} min
-              </span>
+          {/* Price + Duration */}
+          <div className="mt-6 flex items-center justify-between border-t border-ink/5 pt-5">
+            <span className="rounded-full bg-nude-light px-3 py-1 text-xs text-ink/50">
+              {s.duration} min
+            </span>
 
-              <span className="text-ink/20">•</span>
+            <span className="text-base font-semibold text-berry">
+              {s.priceLabel ? (
+                s.priceLabel
+              ) : (
+                <>
+                  {s.startingAt && (
+                    <span className="mr-1 text-xs font-normal text-ink/50">
+                      starts at
+                    </span>
+                  )}
 
-              <span className="font-semibold text-berry">
-                {s.priceLabel ? (
-                  s.priceLabel
-                ) : (
-                  <>
-                    {s.startingAt && (
-                      <span className="mr-1 text-xs font-normal text-ink/50">
-                        starts at
-                      </span>
-                    )}
-                    {formatPHP(s.price)}
-                  </>
-                )}
-              </span>
-            </div>
+                  {formatPHP(s.price)}
+                </>
+              )}
+            </span>
+          </div>
 
-            {/* Book Link */}
-            <div className="mt-6 text-sm font-semibold text-coral transition group-hover:text-berry">
-              Book this service
-              <span className="ml-1 inline-block transition group-hover:translate-x-1">
-                →
-              </span>
-            </div>
+          {/* Add-ons */}
+          <span className="mt-4 inline-flex w-fit items-center text-xs font-semibold text-coral transition group-hover:text-berry">
+            + Add-ons available
+          </span>
+
+          {/* Booking Button */}
+          <div className="mt-5 inline-flex items-center justify-center rounded-full bg-coral px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-coral/20 transition group-hover:bg-coral-dark">
+            Book This Service
+            <span className="ml-2 transition-transform group-hover:translate-x-1">
+              →
+            </span>
           </div>
         </Link>
       ))}
